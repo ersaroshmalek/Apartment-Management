@@ -1,0 +1,11 @@
+{
+  "name": "default",
+  "type": "mongodb",
+  "host": "localhost",
+  "port": 2717,
+  "database": "qayaam",
+  "logging": true,
+  "synchronize": true,
+  "useUnifiedTopology": true,
+  "entities": ["src/entity/*.*"]
+}

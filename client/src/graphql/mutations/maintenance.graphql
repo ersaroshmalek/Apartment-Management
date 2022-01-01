@@ -1,0 +1,10 @@
+query pendingMaintenance {
+  getPendingMembers {
+    id
+    flatNo
+    fullName
+    email
+    contact
+    amountDue
+  }
+}
