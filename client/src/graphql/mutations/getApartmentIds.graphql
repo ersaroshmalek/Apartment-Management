@@ -1,0 +1,5 @@
+query getMembers {
+  getMembers {
+    flatNo
+  }
+}

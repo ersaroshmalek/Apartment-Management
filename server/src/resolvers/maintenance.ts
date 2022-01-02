@@ -1,30 +1,7 @@
 import { Members } from '../entity/Members';
 import { Context } from 'src/types';
-import {
-  Arg,
-  Ctx,
-  Field,
-  InputType,
-  Mutation,
-  ObjectType,
-  Query,
-} from 'type-graphql';
+import { Arg, Ctx, Field, Mutation, ObjectType, Query } from 'type-graphql';
 import { Maintenance } from '../entity/Maintenance';
-
-@InputType()
-class AddMaintenance {
-  @Field()
-  email: string;
-
-  @Field()
-  flatNo: number;
-
-  @Field()
-  date: string;
-
-  @Field()
-  amountPaid: number;
-}
 
 @ObjectType()
 class Output {
@@ -39,10 +16,19 @@ class Output {
 export class MaintenanceResolver {
   @Mutation(() => Output)
   async addMaintenance(
-    @Arg('options') options: AddMaintenance,
+    @Arg('flatNo') flatNo: number,
+    @Arg('date') date: string,
+    @Arg('amountPaid') amountPaid: number,
+    @Arg('email') email: string,
     @Ctx() { em }: Context
   ) {
     const output = new Output();
+    const options = {
+      flatNo: flatNo,
+      date: date,
+      amountPaid: amountPaid,
+      email: email,
+    };
     try {
       const result = await em.findOne(Members, { flatNo: options.flatNo });
       if (!result) {
@@ -71,14 +57,19 @@ export class MaintenanceResolver {
 
   @Query(() => [Members])
   async getPendingMembers(@Ctx() { em }: Context): Promise<Members[]> {
-    const res = await em.find(Members, { amountDue: { $lt: 0 } });
-    console.log(res);
-
     return await em.find(Members, { amountDue: { $lt: 0 } });
   }
 
   @Query(() => [Members])
   async getAllMembers(@Ctx() { em }: Context): Promise<Members[]> {
     return await em.find(Members, {});
+  }
+
+  @Query(() => [Maintenance])
+  async getHistory(
+    @Ctx() { em }: Context,
+    @Arg('apartmentId') apartmentId: number
+  ): Promise<Maintenance[]> {
+    return await em.find(Maintenance, { flatNo: apartmentId });
   }
 }

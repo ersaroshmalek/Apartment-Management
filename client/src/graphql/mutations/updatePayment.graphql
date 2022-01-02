@@ -1,0 +1,17 @@
+mutation Payment(
+  $flatNo: Float!
+  $date: String!
+  $amountPaid: Float!
+  $email: String!
+) {
+  addMaintenance(
+    flatNo: $flatNo
+    date: $date
+    amountPaid: $amountPaid
+    email: $email
+  ) {
+    flatNo
+    due
+    amount
+  }
+}

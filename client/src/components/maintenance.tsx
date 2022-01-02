@@ -7,19 +7,20 @@ import {
   TableBody,
   TableCell,
   Table,
-  DataTableSkeleton,
   Button,
 } from 'carbon-components-react';
 import { usePendingMaintenanceQuery } from '../generated/graphql';
 import { Wrapper } from './wrapper';
 import { Header } from './maintenance-style';
+import { Link } from 'react-router-dom';
 
 interface maintenanceProps {}
 
 export const Maintenance: React.FC<maintenanceProps> = () => {
-  const [{ data, fetching, error }] = usePendingMaintenanceQuery();
+  const [{ data, error }] = usePendingMaintenanceQuery();
   const [rows, setRows] = useState<any>([]);
   const [headers, setHeaders] = useState<any>([]);
+
   const fetchData = () => {
     const res: any = data?.getPendingMembers;
     let header: any = [];
@@ -27,8 +28,8 @@ export const Maintenance: React.FC<maintenanceProps> = () => {
       Object.keys(member)
         .filter(
           (key) =>
-            key != '__typename' &&
-            key != 'id' &&
+            key !== '__typename' &&
+            key !== 'id' &&
             (header.length > 0
               ? header.filter((e) => e.key).length > 0
                 ? false
@@ -36,7 +37,7 @@ export const Maintenance: React.FC<maintenanceProps> = () => {
               : true)
         )
         .map((key) => {
-          header.push({
+          return header.push({
             key: key,
             header: key.charAt(0).toUpperCase() + key.slice(1),
           });
@@ -50,10 +51,6 @@ export const Maintenance: React.FC<maintenanceProps> = () => {
   useEffect(() => {
     fetchData();
   }, [data]);
-
-  const removeData = (id: string) => {
-    console.log('index', id);
-  };
 
   const date = new Date();
   const [month, day, year] = [
@@ -101,15 +98,26 @@ export const Maintenance: React.FC<maintenanceProps> = () => {
                           <TableCell key={cell.id}>{cell.value}</TableCell>
                         ))}
                         <TableCell>
-                          <Button
-                            style={{
-                              margin: '10px 0px',
+                          <Link
+                            to={{
+                              pathname:
+                                '/paymaintenance/' +
+                                row.id +
+                                '/' +
+                                row.cells[0].value +
+                                '/' +
+                                row.cells[2].value,
                             }}
-                            size="md"
-                            onClick={() => removeData(row.id)}
                           >
-                            Update
-                          </Button>
+                            <Button
+                              style={{
+                                margin: '10px 0px',
+                              }}
+                              size="sm"
+                            >
+                              Update
+                            </Button>
+                          </Link>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -117,10 +125,9 @@ export const Maintenance: React.FC<maintenanceProps> = () => {
                 </Table>
               )}
             </DataTable>
-          ) : (
-            <h1>No pending maintenance</h1>
-          )}
+          ) : null}
         </div>
+        {error && <Header color="red">Something went wrong</Header>}
       </Wrapper>
     </React.Fragment>
   );

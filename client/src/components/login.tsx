@@ -1,10 +1,5 @@
 import { ReactElement, useState } from 'react';
-import {
-  Button,
-  Form,
-  InlineLoading,
-  TextInput,
-} from 'carbon-components-react';
+import { Button, Form, TextInput } from 'carbon-components-react';
 import { Wrapper } from './wrapper';
 import { Formik } from 'formik';
 import { useLoginMutMutation } from '../generated/graphql';
@@ -28,6 +23,7 @@ const invaliProp = {
 export default function Login(): ReactElement {
   const [errorState, setError] = useState(false);
   const [, loginMut] = useLoginMutMutation();
+
   return (
     <Wrapper variant="small">
       <Formik

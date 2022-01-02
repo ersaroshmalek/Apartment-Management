@@ -1,0 +1,10 @@
+query History($apartmentId: Float!) {
+  getHistory(apartmentId: $apartmentId) {
+    id
+    flatNo
+    amountPaid
+    email
+    date
+    createdAt
+  }
+}

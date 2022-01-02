@@ -15,17 +15,21 @@ export type Scalars = {
   Float: number;
 };
 
-export type AddMaintenance = {
-  amountPaid: Scalars['Float'];
-  date: Scalars['String'];
-  email: Scalars['String'];
-  flatNo: Scalars['Float'];
-};
-
 export type FieldError = {
   __typename?: 'FieldError';
   field: Scalars['String'];
   message: Scalars['String'];
+};
+
+export type Maintenance = {
+  __typename?: 'Maintenance';
+  _id: Scalars['String'];
+  amountPaid: Scalars['Float'];
+  createdAt: Scalars['String'];
+  date: Scalars['String'];
+  email: Scalars['String'];
+  flatNo: Scalars['Float'];
+  id: Scalars['String'];
 };
 
 export type Members = {
@@ -51,7 +55,10 @@ export type Mutation = {
 
 
 export type MutationAddMaintenanceArgs = {
-  options: AddMaintenance;
+  amountPaid: Scalars['Float'];
+  date: Scalars['String'];
+  email: Scalars['String'];
+  flatNo: Scalars['Float'];
 };
 
 
@@ -94,9 +101,15 @@ export type Output = {
 export type Query = {
   __typename?: 'Query';
   getAllMembers: Array<Members>;
+  getHistory: Array<Maintenance>;
   getMembers: Array<Members>;
   getPendingMembers: Array<Members>;
   hello: Scalars['String'];
+};
+
+
+export type QueryGetHistoryArgs = {
+  apartmentId: Scalars['Float'];
 };
 
 export type User = {
@@ -113,6 +126,11 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
+export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMembersQuery = { __typename?: 'Query', getMembers: Array<{ __typename?: 'Members', flatNo: number }> };
+
 export type LoginMutMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
@@ -126,7 +144,35 @@ export type PendingMaintenanceQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type PendingMaintenanceQuery = { __typename?: 'Query', getPendingMembers: Array<{ __typename?: 'Members', id: string, flatNo: number, fullName: string, email: string, contact: number, amountDue: number }> };
 
+export type HistoryQueryVariables = Exact<{
+  apartmentId: Scalars['Float'];
+}>;
 
+
+export type HistoryQuery = { __typename?: 'Query', getHistory: Array<{ __typename?: 'Maintenance', id: string, flatNo: number, amountPaid: number, email: string, date: string, createdAt: string }> };
+
+export type PaymentMutationVariables = Exact<{
+  flatNo: Scalars['Float'];
+  date: Scalars['String'];
+  amountPaid: Scalars['Float'];
+  email: Scalars['String'];
+}>;
+
+
+export type PaymentMutation = { __typename?: 'Mutation', addMaintenance: { __typename?: 'Output', flatNo: number, due: number, amount: number } };
+
+
+export const GetMembersDocument = gql`
+    query getMembers {
+  getMembers {
+    flatNo
+  }
+}
+    `;
+
+export function useGetMembersQuery(options: Omit<Urql.UseQueryArgs<GetMembersQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetMembersQuery>({ query: GetMembersDocument, ...options });
+};
 export const LoginMutDocument = gql`
     mutation LoginMut($username: String!, $password: String!) {
   login(userNameOrEmail: $username, password: $password) {
@@ -160,4 +206,38 @@ export const PendingMaintenanceDocument = gql`
 
 export function usePendingMaintenanceQuery(options: Omit<Urql.UseQueryArgs<PendingMaintenanceQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PendingMaintenanceQuery>({ query: PendingMaintenanceDocument, ...options });
+};
+export const HistoryDocument = gql`
+    query History($apartmentId: Float!) {
+  getHistory(apartmentId: $apartmentId) {
+    id
+    flatNo
+    amountPaid
+    email
+    date
+    createdAt
+  }
+}
+    `;
+
+export function useHistoryQuery(options: Omit<Urql.UseQueryArgs<HistoryQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<HistoryQuery>({ query: HistoryDocument, ...options });
+};
+export const PaymentDocument = gql`
+    mutation Payment($flatNo: Float!, $date: String!, $amountPaid: Float!, $email: String!) {
+  addMaintenance(
+    flatNo: $flatNo
+    date: $date
+    amountPaid: $amountPaid
+    email: $email
+  ) {
+    flatNo
+    due
+    amount
+  }
+}
+    `;
+
+export function usePaymentMutation() {
+  return Urql.useMutation<PaymentMutation, PaymentMutationVariables>(PaymentDocument);
 };
