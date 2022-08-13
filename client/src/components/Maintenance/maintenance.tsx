@@ -9,8 +9,8 @@ import {
   Table,
   Button,
 } from 'carbon-components-react';
-import { usePendingMaintenanceQuery } from '../generated/graphql';
-import { Wrapper } from './wrapper';
+import { usePendingMaintenanceQuery } from '../../generated/graphql';
+import { Wrapper } from '../wrapper';
 import { Header } from './maintenance-style';
 import { Link } from 'react-router-dom';
 

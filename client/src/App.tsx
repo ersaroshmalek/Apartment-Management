@@ -1,11 +1,11 @@
 import './index.scss';
 import './App.css';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './components/login';
 import { createClient, Provider } from 'urql';
-import { Maintenance } from './components/maintenance';
+import { Maintenance } from './components/Maintenance/maintenance';
 import { PayMaintenance } from './components/Payment/payMaintenance';
-import { Header } from './components/Header/header';
+import { HeaderBar } from './components/Header/header';
 import { MaintenanceHistory } from './components/History/maintenanceHistory';
 
 const client = createClient({
@@ -16,6 +16,7 @@ function App() {
   return (
     <Provider value={client}>
       <BrowserRouter>
+        <HeaderBar />
         <Routes>
           <Route path="login" element={<Login />} />
           <Route path="maintenance" element={<Maintenance />} />
@@ -24,7 +25,7 @@ function App() {
             element={<PayMaintenance />}
           />
           <Route path="history" element={<MaintenanceHistory />} />
-          <Route path="/header" element={<Header />} />
+          {/* <Route path="header" element={<HeaderBar />} /> */}
           <Route
             path="*"
             element={
